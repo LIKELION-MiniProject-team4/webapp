@@ -1,0 +1,3282 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>전공 교수 태크</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <style>
+      :root {
+        --primary: #3b52e2;
+        --primary-dark: #2c3fc4;
+        --primary-light: #eef0fd;
+        --primary-lighter: #f6f7fe;
+        --text: #141726;
+        --text-sub: #6b7280;
+        --text-faint: #9ca3af;
+        --border: #e7e9f0;
+        --bg: #f5f6fa;
+        --white: #ffffff;
+        --star: #ffb020;
+        --danger: #e24b4b;
+        --success: #2fae66;
+        --radius: 16px;
+        --radius-sm: 10px;
+        --shadow: 0 4px 16px rgba(24, 28, 60, 0.06);
+        --shadow-md: 0 16px 40px rgba(24, 28, 60, 0.16);
+        --maxw: 1180px;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        -webkit-font-smoothing: antialiased;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      button {
+        font-family: inherit;
+        cursor: pointer;
+        border: none;
+        background: none;
+      }
+      input,
+      select,
+      textarea {
+        font-family: inherit;
+      }
+      .wrap {
+        max-width: var(--maxw);
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+      img {
+        max-width: 100%;
+        display: block;
+      }
+
+      /* ================= NAVBAR ================= */
+      .navbar {
+        position: sticky;
+        top: 0;
+        z-index: 30;
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid var(--border);
+      }
+      .nav-inner {
+        max-width: var(--maxw);
+        margin: 0 auto;
+        padding: 14px 24px;
+        display: flex;
+        align-items: center;
+        gap: 24px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        font-weight: 800;
+        font-size: 17px;
+        flex-shrink: 0;
+      }
+      .brand .mark {
+        width: 30px;
+        height: 30px;
+        border-radius: 9px;
+        background: linear-gradient(135deg, var(--primary), #7c8cf5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 15px;
+      }
+      .nav-links {
+        display: flex;
+        gap: 6px;
+        flex: 1;
+      }
+      .nav-link {
+        padding: 9px 14px;
+        border-radius: 9px;
+        font-size: 13.5px;
+        font-weight: 700;
+        color: var(--text-sub);
+        white-space: nowrap;
+      }
+      .nav-link.active {
+        color: var(--primary);
+        background: var(--primary-lighter);
+      }
+      .nav-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+      .point-badge {
+        background: var(--primary-lighter);
+        color: var(--primary);
+        font-weight: 800;
+        font-size: 12.5px;
+        padding: 7px 12px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        white-space: nowrap;
+      }
+      .nav-mypage-btn {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        background: #fff;
+        border: 1px solid var(--border);
+        padding: 6px 12px 6px 6px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 12.5px;
+        color: var(--text);
+      }
+      .nav-mypage-btn:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+      .nav-avatar {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: var(--primary-light);
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 12px;
+        flex-shrink: 0;
+      }
+      .login-btn {
+        background: var(--primary);
+        color: #fff;
+        font-weight: 700;
+        font-size: 13px;
+        padding: 9px 16px;
+        border-radius: 9px;
+        white-space: nowrap;
+      }
+      .login-btn:hover {
+        background: var(--primary-dark);
+      }
+      .back-link {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text-sub);
+      }
+      .back-link:hover {
+        color: var(--text);
+      }
+
+      /* ================= VIEWS ================= */
+      .view {
+        display: none;
+      }
+      .view.active {
+        display: block;
+      }
+      .page-pad {
+        padding: 32px 0 64px;
+      }
+
+      /* ================= HOME ================= */
+      .hero {
+        background: linear-gradient(160deg, #eef0fd 0%, #f8f9fe 60%);
+        border-bottom: 1px solid var(--border);
+      }
+      .hero-inner {
+        max-width: var(--maxw);
+        margin: 0 auto;
+        padding: 44px 24px 30px;
+        text-align: center;
+      }
+      .hero h1 {
+        font-size: 28px;
+        font-weight: 800;
+        margin-bottom: 10px;
+        letter-spacing: -0.5px;
+      }
+      .hero p {
+        color: var(--text-sub);
+        font-size: 14.5px;
+        margin-bottom: 24px;
+      }
+      .search-box {
+        max-width: 560px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #fff;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        border-radius: 14px;
+        padding: 14px 18px;
+      }
+      .search-box input {
+        flex: 1;
+        border: none;
+        outline: none;
+        font-size: 14px;
+      }
+      .filter-row {
+        display: flex;
+        gap: 10px;
+        margin-top: 18px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .filter-select {
+        border: 1px solid var(--border);
+        background: #fff;
+        border-radius: 20px;
+        padding: 8px 14px;
+        font-size: 12.5px;
+        color: var(--text);
+        font-weight: 700;
+        outline: none;
+      }
+      .filter-select.active-filter {
+        border-color: var(--primary);
+        color: var(--primary);
+        background: var(--primary-lighter);
+      }
+
+      /* dashboard strip */
+      .dash-strip {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        margin: -46px 0 10px;
+        position: relative;
+        z-index: 2;
+      }
+      .dash-card {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 16px 18px;
+        box-shadow: var(--shadow);
+      }
+      .dash-card .lbl {
+        font-size: 11.5px;
+        color: var(--text-sub);
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+      .dash-card .val {
+        font-size: 20px;
+        font-weight: 800;
+        color: var(--text);
+      }
+      .dash-card .val.accent {
+        color: var(--primary);
+      }
+      .dash-card a.link {
+        font-size: 11.5px;
+        font-weight: 700;
+        color: var(--primary);
+        margin-top: 6px;
+        display: inline-block;
+      }
+
+      .section-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        margin: 36px 0 16px;
+      }
+      .section-head h2 {
+        font-size: 16.5px;
+        font-weight: 800;
+      }
+      .section-head span {
+        font-size: 12.5px;
+        color: var(--text-faint);
+        font-weight: 600;
+      }
+
+      .prof-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+      }
+      .prof-card {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 20px;
+        background: #fff;
+        position: relative;
+        transition: 0.15s;
+        display: flex;
+        flex-direction: column;
+      }
+      .prof-card:hover {
+        box-shadow: var(--shadow-md);
+        transform: translateY(-2px);
+        border-color: #d9def7;
+      }
+      .card-top {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+      .avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: var(--primary-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary);
+        font-weight: 800;
+        font-size: 17px;
+        flex-shrink: 0;
+      }
+      .prof-name {
+        font-weight: 800;
+        font-size: 15.5px;
+        margin-bottom: 2px;
+      }
+      .prof-dept {
+        font-size: 12px;
+        color: var(--text-sub);
+      }
+      .bookmark-btn {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        color: var(--text-faint);
+        font-size: 16px;
+      }
+      .bookmark-btn.active {
+        color: var(--primary);
+      }
+      .tag-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 14px;
+      }
+      .tag-pill {
+        background: var(--primary-lighter);
+        color: var(--primary);
+        font-size: 11.5px;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 20px;
+      }
+      .card-bottom {
+        margin-top: auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 12px;
+        border-top: 1px solid var(--border);
+      }
+      .rating {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-weight: 800;
+        font-size: 13.5px;
+        color: var(--star);
+      }
+      .rating .count {
+        color: var(--text-faint);
+        font-weight: 600;
+        font-size: 11px;
+        margin-left: 2px;
+      }
+      .detail-btn {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--primary);
+        background: var(--primary-lighter);
+        padding: 7px 13px;
+        border-radius: 8px;
+      }
+      .detail-btn:hover {
+        background: var(--primary);
+        color: #fff;
+      }
+
+      .ad-banner {
+        margin-top: 28px;
+        background: linear-gradient(120deg, #1c1f2e, #3a3f58);
+        border-radius: var(--radius);
+        padding: 20px 26px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        color: #fff;
+      }
+      .ad-banner .ad-tag {
+        background: rgba(255, 255, 255, 0.15);
+        font-size: 10.5px;
+        padding: 3px 8px;
+        border-radius: 6px;
+        flex-shrink: 0;
+      }
+      .ad-banner b {
+        display: block;
+        font-size: 14px;
+        margin-bottom: 3px;
+      }
+      .ad-banner span.sub {
+        font-size: 12px;
+        color: #c9ccda;
+      }
+
+      /* ================= DETAIL ================= */
+      .detail-layout {
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        gap: 28px;
+        align-items: start;
+      }
+      .detail-main {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+      }
+      .detail-banner {
+        background: linear-gradient(120deg, var(--primary-lighter), #fff);
+        padding: 26px 26px 20px;
+        border-bottom: 1px solid var(--border);
+      }
+      .detail-banner h1 {
+        font-size: 22px;
+        font-weight: 800;
+        margin-bottom: 6px;
+      }
+      .detail-banner .sub {
+        font-size: 13px;
+        color: var(--text-sub);
+      }
+      .tabs {
+        display: flex;
+        border-bottom: 1px solid var(--border);
+        padding: 0 26px;
+      }
+      .tab-btn {
+        padding: 14px 18px 13px;
+        font-size: 13.5px;
+        font-weight: 700;
+        color: var(--text-faint);
+        border-bottom: 2px solid transparent;
+      }
+      .tab-btn.active {
+        color: var(--primary);
+        border-bottom-color: var(--primary);
+      }
+      .tab-panel {
+        display: none;
+        padding: 24px 26px 30px;
+      }
+      .tab-panel.active {
+        display: block;
+      }
+      .summary-title {
+        font-size: 13.5px;
+        font-weight: 800;
+        margin-bottom: 12px;
+      }
+      .summary-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 9px;
+        margin-bottom: 20px;
+      }
+      .summary-tag {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 12px;
+        font-size: 12.5px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 600;
+      }
+      .summary-tag b {
+        color: var(--primary);
+        font-weight: 800;
+      }
+      .add-tag-btn {
+        background: var(--primary);
+        color: #fff;
+        padding: 11px 18px;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 13px;
+      }
+      .add-tag-btn:hover {
+        background: var(--primary-dark);
+      }
+      .add-tag-note {
+        font-size: 11.5px;
+        color: var(--text-faint);
+        margin-left: 10px;
+      }
+
+      .review-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .sort-select {
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 7px 11px;
+        font-size: 12px;
+        color: var(--text-sub);
+        font-weight: 600;
+      }
+      .write-review-btn {
+        background: var(--primary-lighter);
+        color: var(--primary);
+        font-weight: 700;
+        font-size: 12.5px;
+        padding: 8px 14px;
+        border-radius: 8px;
+      }
+      .write-review-btn:hover {
+        background: var(--primary);
+        color: #fff;
+      }
+      .write-review-btn.locked {
+        background: var(--bg);
+        color: var(--text-faint);
+      }
+      .verify-note {
+        font-size: 11.5px;
+        color: var(--text-faint);
+        margin-bottom: 14px;
+        background: var(--bg);
+        padding: 10px 12px;
+        border-radius: 9px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+      }
+      .verify-note button {
+        color: var(--primary);
+        font-weight: 700;
+      }
+      .review-item {
+        border-bottom: 1px solid var(--border);
+        padding: 16px 0;
+      }
+      .review-item:last-child {
+        border-bottom: none;
+      }
+      .review-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 4px;
+      }
+      .review-user {
+        font-weight: 700;
+        font-size: 13.5px;
+      }
+      .review-stars {
+        color: var(--star);
+        font-size: 12.5px;
+        margin-top: 2px;
+      }
+      .review-date {
+        font-size: 11.5px;
+        color: var(--text-faint);
+      }
+      .review-meta {
+        font-size: 11.5px;
+        color: var(--text-faint);
+        margin: 2px 0 8px;
+      }
+      .review-body {
+        font-size: 13.5px;
+        line-height: 1.6;
+        color: var(--text);
+        margin-bottom: 10px;
+      }
+      .review-actions {
+        display: flex;
+        gap: 16px;
+        font-size: 11.5px;
+        color: var(--text-sub);
+      }
+      .review-actions button {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        color: var(--text-sub);
+      }
+      .review-actions button:hover {
+        color: var(--primary);
+      }
+
+      .diagram-wrap {
+        max-width: 420px;
+        margin: 0 auto;
+        text-align: center;
+      }
+      .diagram-note {
+        font-size: 11.5px;
+        color: var(--text-faint);
+        margin-top: 12px;
+      }
+      .diagram-legend {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        font-size: 12.5px;
+        color: var(--text-sub);
+        font-weight: 600;
+        margin-top: 8px;
+      }
+      .diagram-legend .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--primary);
+      }
+      .diagram-live {
+        font-size: 11px;
+        color: var(--success);
+        font-weight: 700;
+        margin-top: 4px;
+      }
+
+      .side-card {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 22px;
+        position: sticky;
+        top: 88px;
+      }
+      .side-score {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding-bottom: 18px;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 18px;
+      }
+      .side-score .label {
+        font-size: 12px;
+        color: var(--text-sub);
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+      .side-score .num {
+        font-size: 32px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .side-score .num .star-ico {
+        color: var(--star);
+        font-size: 26px;
+      }
+      .side-score .count {
+        font-size: 12px;
+        color: var(--text-faint);
+        margin-top: 4px;
+      }
+      .side-taglbl {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--text-sub);
+        margin-bottom: 8px;
+      }
+      .side-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 18px;
+      }
+      .side-jokbo-btn {
+        width: 100%;
+        background: var(--primary);
+        color: #fff;
+        padding: 12px;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 13px;
+        text-align: center;
+      }
+      .side-jokbo-btn:hover {
+        background: var(--primary-dark);
+      }
+      .side-bookmark-btn {
+        width: 100%;
+        border: 1px solid var(--border);
+        color: var(--text-sub);
+        padding: 11px;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 13px;
+        text-align: center;
+        margin-top: 8px;
+      }
+      .side-bookmark-btn.active {
+        border-color: var(--primary);
+        color: var(--primary);
+        background: var(--primary-lighter);
+      }
+      .side-verify-btn {
+        width: 100%;
+        border: 1px dashed var(--border);
+        color: var(--text-sub);
+        padding: 11px;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 12.5px;
+        text-align: center;
+        margin-top: 8px;
+      }
+      .side-verify-btn.done {
+        border: 1px solid var(--success);
+        color: var(--success);
+        border-style: solid;
+      }
+
+      /* ================= AUTH ================= */
+      .auth-wrap {
+        max-width: 400px;
+        margin: 60px auto;
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 36px 32px;
+        box-shadow: var(--shadow);
+      }
+      .form-title {
+        font-size: 20px;
+        font-weight: 800;
+        text-align: center;
+        margin-bottom: 26px;
+      }
+      .field {
+        margin-bottom: 15px;
+      }
+      .field label {
+        display: block;
+        font-size: 12.5px;
+        font-weight: 700;
+        color: var(--text-sub);
+        margin-bottom: 6px;
+      }
+      .field .input-wrap {
+        position: relative;
+      }
+      .field input,
+      .field select,
+      .field textarea {
+        width: 100%;
+        padding: 11px 13px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        font-size: 13.5px;
+        outline: none;
+      }
+      .field input:focus,
+      .field select:focus,
+      .field textarea:focus {
+        border-color: var(--primary);
+      }
+      .field .eye {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-faint);
+        font-size: 13px;
+        cursor: pointer;
+      }
+      .checkbox-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12.5px;
+        color: var(--text-sub);
+        margin: 14px 0 18px;
+      }
+      .primary-btn {
+        width: 100%;
+        background: var(--primary);
+        color: #fff;
+        padding: 13px;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 14.5px;
+      }
+      .primary-btn:hover {
+        background: var(--primary-dark);
+      }
+      .form-footer {
+        text-align: center;
+        font-size: 12.5px;
+        color: var(--text-sub);
+        margin-top: 16px;
+      }
+      .form-footer a {
+        color: var(--primary);
+        font-weight: 700;
+      }
+      .remember-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12.5px;
+        color: var(--text-sub);
+        margin: 2px 0 20px;
+      }
+      .err-msg {
+        font-size: 11.5px;
+        color: var(--danger);
+        margin-top: 6px;
+        display: none;
+      }
+
+      /* ================= MYPAGE ================= */
+      .mypage-layout {
+        display: grid;
+        grid-template-columns: 230px 1fr;
+        gap: 24px;
+        align-items: start;
+      }
+      .side-nav {
+        background: #1c2033;
+        color: #fff;
+        border-radius: var(--radius);
+        padding: 22px 0;
+        position: sticky;
+        top: 88px;
+      }
+      .mypage-profile-mini {
+        padding: 0 20px 18px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .mypage-profile-mini .avatar {
+        background: rgba(255, 255, 255, 0.12);
+        color: #fff;
+      }
+      .mypage-profile-mini .name {
+        font-weight: 800;
+        font-size: 13.5px;
+      }
+      .mypage-profile-mini .meta {
+        font-size: 11px;
+        color: #9ea3c4;
+      }
+      .side-item {
+        padding: 12px 20px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #c6c9e0;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+      }
+      .side-item:hover {
+        color: #fff;
+      }
+      .side-item.active {
+        background: rgba(255, 255, 255, 0.09);
+        color: #fff;
+        border-left: 3px solid var(--primary);
+        padding-left: 17px;
+      }
+      .mypage-content {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 26px;
+        min-height: 420px;
+      }
+      .mypage-side-panel {
+        display: none;
+      }
+      .mypage-side-panel.active {
+        display: block;
+      }
+      .point-card {
+        background: var(--primary-lighter);
+        border-radius: var(--radius);
+        padding: 20px;
+        margin-bottom: 22px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .point-card .lbl {
+        font-size: 12.5px;
+        color: var(--text-sub);
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+      .point-value {
+        font-size: 27px;
+        font-weight: 800;
+        color: var(--primary);
+      }
+      .section-title-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 22px 0 10px;
+      }
+      .section-title-row h3 {
+        font-size: 14px;
+        font-weight: 800;
+      }
+      .history-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .history-table td {
+        padding: 11px 4px;
+        font-size: 13px;
+        border-bottom: 1px solid var(--border);
+      }
+      .history-table .h-date {
+        color: var(--text-faint);
+        font-size: 11.5px;
+      }
+      .h-point {
+        font-weight: 800;
+        text-align: right;
+      }
+      .h-point.plus {
+        color: var(--success);
+      }
+      .h-point.minus {
+        color: var(--danger);
+      }
+      .owned-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .owned-item {
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 16px;
+      }
+      .owned-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 4px;
+      }
+      .owned-title {
+        font-weight: 700;
+        font-size: 13.5px;
+      }
+      .owned-prof {
+        font-size: 12px;
+        color: var(--text-sub);
+        margin-bottom: 12px;
+      }
+      .owned-date {
+        font-size: 11px;
+        color: var(--text-faint);
+      }
+      .ghost-btn {
+        border: 1px solid var(--border);
+        color: var(--text-sub);
+        font-size: 11.5px;
+        font-weight: 700;
+        padding: 7px 12px;
+        border-radius: 8px;
+      }
+      .ghost-btn:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+      .empty-note {
+        text-align: center;
+        color: var(--text-faint);
+        font-size: 13px;
+        padding: 40px 0;
+      }
+      .bookmark-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .verify-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border);
+        font-size: 13px;
+      }
+      .verify-badge {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--success);
+        background: #eafbf1;
+        padding: 4px 9px;
+        border-radius: 20px;
+      }
+
+      /* ================= STORE ================= */
+      .store-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+      }
+      .store-item {
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 20px;
+        background: #fff;
+        display: flex;
+        flex-direction: column;
+      }
+      .store-item-title {
+        font-weight: 700;
+        font-size: 14px;
+        margin-bottom: 4px;
+      }
+      .store-price {
+        font-weight: 800;
+        color: var(--primary);
+        font-size: 13.5px;
+      }
+      .store-item-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+      .store-item-sub {
+        font-size: 12px;
+        color: var(--text-sub);
+        margin: 6px 0 4px;
+        line-height: 1.5;
+      }
+      .store-item-author {
+        font-size: 11px;
+        color: var(--text-faint);
+        margin-bottom: 14px;
+      }
+      .buy-btn {
+        background: var(--primary);
+        color: #fff;
+        font-size: 12.5px;
+        font-weight: 700;
+        padding: 9px 15px;
+        border-radius: 8px;
+        margin-top: auto;
+      }
+      .buy-btn:hover {
+        background: var(--primary-dark);
+      }
+      .sponsor-card {
+        grid-column: 1/-1;
+        background: var(--primary-lighter);
+        border: 1px solid var(--primary-light);
+        border-radius: var(--radius);
+        padding: 18px 22px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .sponsor-tag {
+        background: var(--primary);
+        color: #fff;
+        font-size: 10px;
+        padding: 3px 8px;
+        border-radius: 6px;
+        margin-bottom: 6px;
+        display: inline-block;
+      }
+      .sponsor-title {
+        font-size: 13.5px;
+        font-weight: 700;
+      }
+      .write-jokbo-btn {
+        background: var(--primary);
+        color: #fff;
+        font-weight: 700;
+        font-size: 13px;
+        padding: 10px 18px;
+        border-radius: 10px;
+      }
+      .write-jokbo-btn:hover {
+        background: var(--primary-dark);
+      }
+
+      /* ================= JOKBO DETAIL / WRITE ================= */
+      .jokbo-detail {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 32px;
+        max-width: 820px;
+        margin: 0 auto;
+      }
+      .jokbo-detail h1 {
+        font-size: 20px;
+        font-weight: 800;
+        margin-bottom: 6px;
+      }
+      .jokbo-detail .meta {
+        font-size: 12.5px;
+        color: var(--text-sub);
+        margin-bottom: 22px;
+      }
+      .jokbo-section {
+        margin-bottom: 22px;
+      }
+      .jokbo-section h4 {
+        font-size: 13.5px;
+        font-weight: 800;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .jokbo-qa {
+        background: var(--bg);
+        border-radius: 10px;
+        padding: 14px 16px;
+        margin-bottom: 10px;
+      }
+      .jokbo-qa .q {
+        font-weight: 700;
+        font-size: 13px;
+        margin-bottom: 6px;
+      }
+      .jokbo-qa .a {
+        font-size: 12.5px;
+        color: var(--text-sub);
+        line-height: 1.6;
+        white-space: pre-wrap;
+      }
+      .jokbo-locked {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--text-sub);
+      }
+      .jokbo-locked .lock-ico {
+        font-size: 32px;
+        margin-bottom: 14px;
+      }
+      .jokbo-write-wrap {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 32px;
+        max-width: 640px;
+        margin: 0 auto;
+      }
+      .jokbo-write-wrap h1 {
+        font-size: 19px;
+        font-weight: 800;
+        margin-bottom: 20px;
+      }
+      .fixed-price-note {
+        font-size: 12px;
+        color: var(--text-faint);
+        margin-top: -8px;
+        margin-bottom: 15px;
+      }
+
+      /* ================= DIAGRAM PAGE ================= */
+      .diagram-page-inner {
+        max-width: 520px;
+        margin: 0 auto;
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 28px;
+      }
+      .prof-select {
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        padding: 9px 14px;
+        font-size: 13.5px;
+        font-weight: 700;
+        width: 100%;
+        margin-bottom: 20px;
+      }
+      .legend-box {
+        margin-top: 20px;
+        border-top: 1px solid var(--border);
+        padding-top: 18px;
+      }
+      .legend-box h4 {
+        font-size: 13px;
+        font-weight: 800;
+        margin-bottom: 10px;
+      }
+      .legend-item {
+        font-size: 12px;
+        color: var(--text-sub);
+        line-height: 1.8;
+      }
+      .legend-item b {
+        color: var(--text);
+      }
+
+      /* ================= MODAL ================= */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(10, 12, 20, 0.55);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+        padding: 20px;
+        overflow: auto;
+      }
+      .modal-overlay.active {
+        display: flex;
+      }
+      .modal-box {
+        background: #fff;
+        border-radius: 18px;
+        padding: 28px 26px;
+        width: 100%;
+        max-width: 380px;
+        box-shadow: var(--shadow-md);
+        max-height: 88vh;
+        overflow: auto;
+      }
+      .modal-box.text-center {
+        text-align: center;
+      }
+      .modal-box h3 {
+        font-size: 16px;
+        font-weight: 800;
+        margin-bottom: 16px;
+      }
+      .modal-box p {
+        font-size: 12.5px;
+        color: var(--text-sub);
+        margin-bottom: 14px;
+        line-height: 1.5;
+      }
+      .modal-point {
+        font-size: 23px;
+        font-weight: 800;
+        color: var(--primary);
+        margin-bottom: 18px;
+      }
+      .modal-btn-row {
+        display: flex;
+        gap: 8px;
+        margin-top: 6px;
+      }
+      .modal-btn-row button {
+        flex: 1;
+        padding: 11px;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 13px;
+      }
+      .modal-cancel {
+        background: var(--bg);
+        color: var(--text-sub);
+      }
+      .modal-cancel:hover {
+        background: #eaebf2;
+      }
+      .modal-confirm {
+        background: var(--primary);
+        color: #fff;
+      }
+      .modal-confirm:hover {
+        background: var(--primary-dark);
+      }
+      .star-select {
+        display: flex;
+        gap: 6px;
+        justify-content: center;
+        font-size: 26px;
+        color: var(--border);
+        margin-bottom: 16px;
+      }
+      .star-select span {
+        cursor: pointer;
+      }
+      .star-select span.on {
+        color: var(--star);
+      }
+      .tag-option-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-bottom: 16px;
+        max-height: 220px;
+        overflow: auto;
+      }
+      .tag-option {
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        padding: 9px 10px;
+        font-size: 12.5px;
+        font-weight: 600;
+        text-align: center;
+        color: var(--text-sub);
+      }
+      .tag-option.selected {
+        border-color: var(--primary);
+        background: var(--primary-lighter);
+        color: var(--primary);
+      }
+      .anon-note {
+        font-size: 11px;
+        color: var(--text-faint);
+        text-align: center;
+        margin-top: -8px;
+        margin-bottom: 14px;
+      }
+
+      .toast {
+        position: fixed;
+        left: 50%;
+        bottom: 30px;
+        transform: translateX(-50%);
+        background: #1c2033;
+        color: #fff;
+        padding: 13px 20px;
+        border-radius: 12px;
+        font-size: 12.5px;
+        font-weight: 600;
+        display: none;
+        align-items: center;
+        gap: 8px;
+        z-index: 200;
+        box-shadow: var(--shadow-md);
+      }
+      .toast.active {
+        display: flex;
+      }
+      .toast .check {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--success);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        flex-shrink: 0;
+      }
+
+      /* ================= RESPONSIVE ================= */
+      @media (max-width: 980px) {
+        .prof-grid,
+        .store-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .detail-layout {
+          grid-template-columns: 1fr;
+        }
+        .side-card {
+          position: static;
+        }
+        .mypage-layout {
+          grid-template-columns: 1fr;
+        }
+        .side-nav {
+          position: static;
+          display: flex;
+          overflow-x: auto;
+          padding: 12px;
+          gap: 4px;
+        }
+        .mypage-profile-mini {
+          display: none;
+        }
+        .side-item {
+          white-space: nowrap;
+          border-left: none;
+          border-radius: 8px;
+        }
+        .side-item.active {
+          border-left: none;
+          padding-left: 20px;
+          background: var(--primary);
+        }
+        .nav-links {
+          display: none;
+        }
+        .dash-strip {
+          grid-template-columns: repeat(2, 1fr);
+          margin-top: 0;
+        }
+      }
+      @media (max-width: 640px) {
+        .prof-grid,
+        .store-grid,
+        .owned-grid,
+        .bookmark-grid,
+        .summary-grid {
+          grid-template-columns: 1fr;
+        }
+        .hero h1 {
+          font-size: 21px;
+        }
+        .dash-strip {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ================= NAVBAR ================= -->
+    <div class="navbar">
+      <div class="nav-inner">
+        <div class="brand" onclick="go('home')">
+          <span class="mark">🎓</span>전공 교수 태크
+        </div>
+        <div class="nav-links" id="navLinks">
+          <a class="nav-link active" data-nav="home" onclick="go('home')">홈</a>
+          <a class="nav-link" data-nav="store" onclick="go('store')"
+            >족보 스토어</a
+          >
+          <a class="nav-link" data-nav="diagram" onclick="go('diagram')"
+            >다이어그램</a
+          >
+        </div>
+        <div class="nav-right" id="navRight"></div>
+      </div>
+    </div>
+
+    <!-- ================= HOME ================= -->
+    <div class="view active" id="view-home">
+      <div class="hero">
+        <div class="hero-inner">
+          <h1>을지대학교 전공 교수 정보를 한눈에</h1>
+          <p>선배들의 태그와 리뷰로 수강신청 전에 미리 확인하세요</p>
+          <div class="search-box">
+            <span>🔍</span>
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="교수명 또는 과목명을 검색하세요"
+              oninput="renderProfList()"
+            />
+          </div>
+          <div class="filter-row">
+            <select
+              class="filter-select"
+              id="deptFilter"
+              onchange="renderProfList()"
+            >
+              <option value="전체">학과 전체</option>
+              <option value="물리치료학과">물리치료학과</option>
+              <option value="임상병리학과">임상병리학과</option>
+              <option value="의예과">의예과</option>
+            </select>
+            <select
+              class="filter-select"
+              id="gradeFilter"
+              onchange="renderProfList()"
+            >
+              <option value="전체">학년 전체</option>
+              <option value="1학년">1학년</option>
+              <option value="2학년">2학년</option>
+              <option value="3학년">3학년</option>
+              <option value="4학년">4학년</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="wrap page-pad">
+        <div class="dash-strip" id="dashStrip"></div>
+        <div class="section-head">
+          <h2>전체 교수님</h2>
+          <span id="profCountLabel"></span>
+        </div>
+        <div class="prof-grid" id="profList"></div>
+        <div class="ad-banner">
+          <div class="ad-tag">광고</div>
+          <div>
+            <b>을지대학교 공식 서점</b
+            ><span class="sub">신학기 교재 최대 20% 할인!</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= DETAIL ================= -->
+    <div class="view" id="view-detail">
+      <div class="wrap page-pad">
+        <a
+          class="back-link"
+          onclick="go('home')"
+          style="margin-bottom: 18px; display: inline-flex"
+          >← 목록으로</a
+        >
+        <div class="detail-layout">
+          <div class="detail-main">
+            <div class="detail-banner">
+              <h1 id="detailName"></h1>
+              <div class="sub" id="detailSub"></div>
+            </div>
+            <div class="tabs">
+              <div
+                class="tab-btn active"
+                data-tab="summary"
+                onclick="switchTab('summary')"
+              >
+                태그 요약
+              </div>
+              <div
+                class="tab-btn"
+                data-tab="review"
+                onclick="switchTab('review')"
+              >
+                리뷰
+              </div>
+              <div
+                class="tab-btn"
+                data-tab="diagram"
+                onclick="switchTab('diagram')"
+              >
+                다이어그램
+              </div>
+            </div>
+            <div class="tab-panel active" id="panel-summary">
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-bottom: 14px;
+                "
+              >
+                <div class="summary-title" style="margin: 0">
+                  태그 요약
+                  <span style="font-weight: 500; color: var(--text-faint)"
+                    >(태그는 다이어그램에도 실시간 반영돼요)</span
+                  >
+                </div>
+                <div>
+                  <button class="add-tag-btn" onclick="openTagModal()">
+                    + 태그 입력하기</button
+                  ><span class="add-tag-note" id="tagLoginNote"></span>
+                </div>
+              </div>
+              <div class="summary-grid" id="summaryGrid"></div>
+            </div>
+            <div class="tab-panel" id="panel-review">
+              <div class="review-toolbar">
+                <div class="sort-select">시간순 정렬 ▾</div>
+                <button
+                  class="write-review-btn"
+                  id="writeReviewBtn"
+                  onclick="handleReviewClick()"
+                >
+                  ✍️ 리뷰 작성
+                </button>
+              </div>
+              <div class="verify-note" id="verifyNote" style="display: none">
+                <span
+                  >이 교수님 수업을 수강하셨나요? 수강확인서 인증을 하면 리뷰를
+                  작성할 수 있어요.</span
+                >
+                <button onclick="openVerifyModal()">인증하기</button>
+              </div>
+              <div id="reviewList"></div>
+            </div>
+            <div class="tab-panel" id="panel-diagram">
+              <div class="diagram-wrap">
+                <canvas id="detailRadarChart" height="260"></canvas>
+                <div class="diagram-legend">
+                  <span class="dot"></span
+                  ><span id="diagramLegendName"></span> 평균
+                </div>
+                <div class="diagram-live">
+                  🟢 리뷰·태그가 등록될 때마다 실시간으로 반영됩니다
+                </div>
+                <div class="diagram-note">
+                  * 5점 만점 기준으로 산출된 평균 값입니다.
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="side-card">
+            <div class="side-score">
+              <div class="label">전체 평점</div>
+              <div class="num">
+                <span class="star-ico">★</span><span id="detailRating"></span>
+              </div>
+              <div class="count" id="detailReviewCount"></div>
+            </div>
+            <div class="side-taglbl">주요 태그 TOP3</div>
+            <div class="side-tags" id="detailTopTags"></div>
+            <button class="side-jokbo-btn" onclick="goJokboFromDetail()">
+              📘 이 교수님 족보 보기
+            </button>
+            <button
+              class="side-bookmark-btn"
+              id="detailBookmarkBtn"
+              onclick="toggleBookmarkDetail()"
+            >
+              🔖 찜하기
+            </button>
+            <button
+              class="side-verify-btn"
+              id="detailVerifyBtn"
+              onclick="openVerifyModal()"
+            >
+              🎓 수강확인서 인증하기
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= SIGNUP ================= -->
+    <div class="view" id="view-signup">
+      <div class="wrap">
+        <div class="auth-wrap">
+          <div class="form-title">회원가입</div>
+          <div class="field">
+            <label>이메일</label
+            ><input
+              type="email"
+              id="suEmail"
+              placeholder="이메일을 입력하세요"
+            />
+          </div>
+          <div class="field">
+            <label>비밀번호</label>
+            <div class="input-wrap">
+              <input
+                type="password"
+                id="suPw"
+                placeholder="비밀번호를 입력하세요"
+              /><span class="eye" onclick="togglePw('suPw')">👁</span>
+            </div>
+          </div>
+          <div class="field">
+            <label>닉네임</label
+            ><input type="text" id="suNick" placeholder="닉네임을 입력하세요" />
+          </div>
+          <div class="field">
+            <label>학교</label
+            ><select>
+              <option>을지대학교</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>학과</label
+            ><select id="suDept">
+              <option>물리치료학과</option>
+              <option>임상병리학과</option>
+              <option>의예과</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>학년</label
+            ><select id="suGrade">
+              <option>1학년</option>
+              <option>2학년</option>
+              <option>3학년</option>
+              <option>4학년</option>
+            </select>
+          </div>
+          <div class="checkbox-row">
+            <input type="checkbox" id="suAgree" /><span
+              >이용약관 및 개인정보 처리방침에 동의합니다.</span
+            >
+          </div>
+          <div class="err-msg" id="suErr"></div>
+          <button class="primary-btn" onclick="signupComplete()">
+            가입하기 (+20P 즉시 지급)
+          </button>
+          <div class="form-footer">
+            이미 계정이 있으신가요? <a onclick="go('login')">로그인 하기</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= LOGIN ================= -->
+    <div class="view" id="view-login">
+      <div class="wrap">
+        <div class="auth-wrap">
+          <div class="form-title">로그인</div>
+          <div class="field">
+            <label>이메일</label
+            ><input
+              type="email"
+              id="loginEmail"
+              placeholder="이메일을 입력하세요"
+            />
+          </div>
+          <div class="field">
+            <label>비밀번호</label>
+            <div class="input-wrap">
+              <input
+                type="password"
+                id="loginPw"
+                placeholder="비밀번호를 입력하세요"
+              /><span class="eye" onclick="togglePw('loginPw')">👁</span>
+            </div>
+          </div>
+          <div class="remember-row">
+            <input type="checkbox" checked /><span>로그인 상태 유지</span>
+          </div>
+          <button class="primary-btn" onclick="doLogin()">로그인</button>
+          <div class="form-footer">
+            계정이 없으신가요? <a onclick="go('signup')">회원가입 하기</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= MYPAGE ================= -->
+    <div class="view" id="view-mypage">
+      <div class="wrap page-pad">
+        <div class="mypage-layout">
+          <div class="side-nav">
+            <div class="mypage-profile-mini">
+              <div class="avatar">😀</div>
+              <div>
+                <div class="name" id="mypageName">을지대1학년</div>
+                <div class="meta" id="mypageDept">물리치료학과 1학년</div>
+              </div>
+            </div>
+            <div
+              class="side-item active"
+              data-side="point"
+              onclick="switchSide('point')"
+            >
+              🪙 포인트
+            </div>
+            <div
+              class="side-item"
+              data-side="grade"
+              onclick="switchSide('grade')"
+            >
+              📄 학적/수강 인증 내역
+            </div>
+            <div
+              class="side-item"
+              data-side="owned"
+              onclick="switchSide('owned')"
+            >
+              📘 내가 가진 족보
+            </div>
+            <div
+              class="side-item"
+              data-side="written"
+              onclick="switchSide('written')"
+            >
+              📝 내가 작성한 족보
+            </div>
+            <div
+              class="side-item"
+              data-side="bookmark"
+              onclick="switchSide('bookmark')"
+            >
+              ⭐ 찜 목록
+            </div>
+            <div
+              class="side-item"
+              data-side="edit"
+              onclick="switchSide('edit')"
+            >
+              ✏️ 내 정보 수정
+            </div>
+            <div class="side-item" onclick="doLogout()">🚪 로그아웃</div>
+          </div>
+          <div class="mypage-content">
+            <div class="mypage-side-panel active" id="side-point">
+              <div class="point-card">
+                <div>
+                  <div class="lbl">내 포인트</div>
+                  <div class="point-value">
+                    <span id="pointValue">0</span> P
+                  </div>
+                </div>
+                <button class="ghost-btn" onclick="go('store')">
+                  족보 스토어 가기
+                </button>
+              </div>
+              <div class="section-title-row">
+                <h3>포인트 적립/사용 내역</h3>
+              </div>
+              <table class="history-table" id="pointHistoryTable"></table>
+            </div>
+            <div class="mypage-side-panel" id="side-grade">
+              <div class="section-title-row"><h3>학적 내역</h3></div>
+              <table class="history-table">
+                <tr>
+                  <td>학교</td>
+                  <td style="text-align: right; font-weight: 700">
+                    을지대학교
+                  </td>
+                </tr>
+                <tr>
+                  <td>학과</td>
+                  <td
+                    style="text-align: right; font-weight: 700"
+                    id="gradeDept"
+                  >
+                    물리치료학과
+                  </td>
+                </tr>
+                <tr>
+                  <td>학년</td>
+                  <td
+                    style="text-align: right; font-weight: 700"
+                    id="gradeYear"
+                  >
+                    1학년
+                  </td>
+                </tr>
+                <tr>
+                  <td>가입일</td>
+                  <td style="text-align: right; font-weight: 700">
+                    2024.02.10
+                  </td>
+                </tr>
+              </table>
+              <div class="section-title-row"><h3>수강확인서 인증 내역</h3></div>
+              <div id="verifyList"></div>
+            </div>
+            <div class="mypage-side-panel" id="side-owned">
+              <div class="section-title-row"><h3>내가 가진 족보</h3></div>
+              <div class="owned-grid" id="ownedList"></div>
+            </div>
+            <div class="mypage-side-panel" id="side-written">
+              <div class="section-title-row">
+                <h3>내가 작성한 족보</h3>
+                <button
+                  class="ghost-btn"
+                  onclick="
+                    go('store');
+                    openWriteJokbo();
+                  "
+                >
+                  + 새 족보 작성
+                </button>
+              </div>
+              <div class="owned-grid" id="writtenList"></div>
+            </div>
+            <div class="mypage-side-panel" id="side-bookmark">
+              <div class="section-title-row"><h3>찜한 교수님</h3></div>
+              <div class="bookmark-grid" id="bookmarkListMypage"></div>
+            </div>
+            <div class="mypage-side-panel" id="side-edit">
+              <div class="section-title-row"><h3>내 정보 수정</h3></div>
+              <div style="max-width: 360px">
+                <div class="field">
+                  <label>닉네임</label
+                  ><input type="text" id="editNick" value="을지대1학년" />
+                </div>
+                <div class="field">
+                  <label>학과</label
+                  ><select id="editDept">
+                    <option>물리치료학과</option>
+                    <option>임상병리학과</option>
+                    <option>의예과</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>학년</label
+                  ><select id="editGrade">
+                    <option>1학년</option>
+                    <option>2학년</option>
+                    <option>3학년</option>
+                    <option>4학년</option>
+                  </select>
+                </div>
+                <button class="primary-btn" onclick="saveProfile()">
+                  저장하기
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= STORE ================= -->
+    <div class="view" id="view-store">
+      <div class="wrap page-pad">
+        <div class="section-head" style="margin-top: 0">
+          <h2>족보 스토어</h2>
+          <button class="write-jokbo-btn" onclick="openWriteJokbo()">
+            + 족보 작성하기
+          </button>
+        </div>
+        <div class="search-box" style="max-width: 100%; margin-bottom: 16px">
+          <span>🔍</span
+          ><input
+            type="text"
+            id="storeSearchInput"
+            placeholder="과목명 또는 교수명을 검색하세요"
+            oninput="renderStore()"
+          />
+        </div>
+        <div
+          class="filter-row"
+          style="
+            justify-content: flex-start;
+            margin-bottom: 22px;
+            margin-top: 0;
+          "
+        >
+          <select
+            class="filter-select"
+            id="storeDeptFilter"
+            onchange="renderStore()"
+          >
+            <option value="전체">학과 전체</option>
+            <option value="물리치료학과">물리치료학과</option>
+            <option value="임상병리학과">임상병리학과</option>
+            <option value="의예과">의예과</option>
+          </select>
+          <select
+            class="filter-select"
+            id="storeGradeFilter"
+            onchange="renderStore()"
+          >
+            <option value="전체">학년 전체</option>
+            <option value="1학년">1학년</option>
+            <option value="2학년">2학년</option>
+            <option value="3학년">3학년</option>
+            <option value="4학년">4학년</option>
+          </select>
+        </div>
+        <div class="store-grid" id="storeList"></div>
+      </div>
+    </div>
+
+    <!-- ================= JOKBO DETAIL ================= -->
+    <div class="view" id="view-jokbo">
+      <div class="wrap page-pad">
+        <a
+          class="back-link"
+          onclick="go('store')"
+          style="margin-bottom: 18px; display: inline-flex"
+          >← 족보 스토어로</a
+        >
+        <div class="jokbo-detail" id="jokboDetailBody"></div>
+      </div>
+    </div>
+
+    <!-- ================= JOKBO WRITE ================= -->
+    <div class="view" id="view-jokbo-write">
+      <div class="wrap page-pad">
+        <a
+          class="back-link"
+          onclick="go('store')"
+          style="margin-bottom: 18px; display: inline-flex"
+          >← 족보 스토어로</a
+        >
+        <div class="jokbo-write-wrap">
+          <h1>족보 작성하기</h1>
+          <div class="field">
+            <label>담당 교수</label>
+            <select id="wjProf"></select>
+          </div>
+          <div class="field">
+            <label>족보 제목</label
+            ><input
+              type="text"
+              id="wjTitle"
+              placeholder="예: 운동처방학 중간고사 기출 정리"
+            />
+          </div>
+          <div class="field">
+            <label>요약 / 핵심 정리</label
+            ><textarea
+              id="wjSummary"
+              rows="3"
+              placeholder="족보의 핵심 내용을 요약해주세요"
+            ></textarea>
+          </div>
+          <div class="field">
+            <label>기출문제 &amp; 내용 (자유 서술)</label
+            ><textarea
+              id="wjContent"
+              rows="8"
+              placeholder="기출문제, 모범답안, 강의 팁 등을 자유롭게 작성해주세요"
+            ></textarea>
+          </div>
+          <div class="field">
+            <label>판매 포인트</label
+            ><input type="text" value="10P (고정)" disabled />
+          </div>
+          <div class="fixed-price-note">
+            족보 가격은 10포인트로 고정되어 있어요.
+          </div>
+          <button class="primary-btn" onclick="submitJokboWrite()">
+            등록하기
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= DIAGRAM PAGE ================= -->
+    <div class="view" id="view-diagram">
+      <div class="wrap page-pad">
+        <div class="section-head" style="margin-top: 0">
+          <h2>교수 평가 다이어그램</h2>
+        </div>
+        <div class="diagram-page-inner">
+          <select
+            class="prof-select"
+            id="diagramProfSelect"
+            onchange="renderDiagramPage()"
+          ></select>
+          <canvas id="standaloneRadarChart" height="260"></canvas>
+          <div class="diagram-legend">
+            <span class="dot"></span
+            ><span id="standaloneLegendName"></span> 평균
+          </div>
+          <div class="legend-box">
+            <h4>지표 설명</h4>
+            <div class="legend-item">
+              <b>난이도:</b> 시험 난이도 태그 기반 실시간 평균<br />
+              <b>과제량:</b> 과제 관련 태그 기반 실시간 평균<br />
+              <b>시험 범위 명확성:</b> 시험 범위 안내 관련 태그 기반<br />
+              <b>피드백 속도:</b> 피드백/자료 제공 관련 태그 기반<br />
+              <b>수업 태도:</b> 설명 친절도 태그 + 리뷰 별점 기반
+            </div>
+          </div>
+          <div class="diagram-note" style="text-align: center">
+            * 태그와 리뷰가 새로 등록될 때마다 값이 실시간으로 갱신됩니다.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= MODALS ================= -->
+    <div class="modal-overlay" id="purchaseModal">
+      <div class="modal-box text-center">
+        <h3>족보 구매</h3>
+        <p id="modalDesc">족보를 10포인트로 구매하시겠습니까?</p>
+        <div
+          style="font-size: 11.5px; color: var(--text-sub); margin-bottom: 4px"
+        >
+          보유 포인트
+        </div>
+        <div class="modal-point" id="modalPoint">0 P</div>
+        <div class="modal-btn-row">
+          <button class="modal-cancel" onclick="closeModal('purchaseModal')">
+            취소
+          </button>
+          <button class="modal-confirm" onclick="confirmPurchase()">
+            구매
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="tagModal">
+      <div class="modal-box">
+        <h3>태그 입력하기</h3>
+        <div class="tag-option-grid" id="tagOptionGrid"></div>
+        <div class="modal-btn-row">
+          <button class="modal-cancel" onclick="closeModal('tagModal')">
+            취소
+          </button>
+          <button class="modal-confirm" onclick="submitTag()">
+            등록 (+2P)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="reviewModal">
+      <div class="modal-box">
+        <h3>리뷰 작성하기</h3>
+        <div class="anon-note">리뷰는 익명으로 등록돼요 🙈</div>
+        <div class="star-select" id="starSelect">
+          <span data-v="1">★</span><span data-v="2">★</span
+          ><span data-v="3">★</span><span data-v="4">★</span
+          ><span data-v="5">★</span>
+        </div>
+        <div class="field">
+          <textarea
+            id="reviewText"
+            rows="4"
+            placeholder="수강 경험을 자유롭게 남겨주세요"
+          ></textarea>
+        </div>
+        <div class="modal-btn-row">
+          <button class="modal-cancel" onclick="closeModal('reviewModal')">
+            취소
+          </button>
+          <button class="modal-confirm" onclick="submitReview()">
+            등록 (+3P)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="verifyModal">
+      <div class="modal-box text-center">
+        <h3>수강확인서 인증</h3>
+        <p id="verifyDesc">해당 교수님 수업의 수강확인서를 인증하시겠습니까?</p>
+        <div class="field" style="text-align: left">
+          <label>수강 학기</label>
+          <select id="verifyTerm">
+            <option>2024-1</option>
+            <option>2023-2</option>
+            <option>2023-1</option>
+          </select>
+        </div>
+        <p style="font-size: 11px">
+          * 데모 버전에서는 학기 선택만으로 인증이 완료됩니다.
+        </p>
+        <div class="modal-btn-row">
+          <button class="modal-cancel" onclick="closeModal('verifyModal')">
+            취소
+          </button>
+          <button class="modal-confirm" onclick="confirmVerify()">
+            인증하기
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast">
+      <span class="check">✓</span><span id="toastText"></span>
+    </div>
+
+    <script>
+      /* ================= STATE ================= */
+      let state = {
+        loggedIn: false,
+        points: 0,
+        currentProf: null,
+        bookmarks: new Set(),
+        pendingPurchase: null,
+        reviewStars: 0,
+        selectedTag: null,
+        currentJokboKey: null,
+        verifyTargetProfId: null,
+        nickname: '을지대1학년',
+        dept: '물리치료학과',
+        grade: '1학년',
+        verifiedProfIds: new Set(),
+      };
+
+      /* ================= AXIS / TAG MAPPING ================= */
+      const AXES = [
+        '난이도',
+        '과제량',
+        '시험 범위 명확성',
+        '피드백 속도',
+        '수업 태도',
+      ];
+      const tagAxisMap = {
+        '설명 친절': [['수업 태도', 5]],
+        '과제 적당': [['과제량', 3]],
+        '과제 많음': [['과제량', 5]],
+        '시험 난이도 상': [['난이도', 5]],
+        '시험 난이도 중': [['난이도', 3]],
+        '시험 난이도 하': [['난이도', 1]],
+        '피드백 빠름': [['피드백 속도', 5]],
+        '유쾌한 수업': [['수업 태도', 5]],
+        '자료 잘 제공': [['피드백 속도', 4]],
+        '시험 범위 명확': [['시험 범위 명확성', 5]],
+        '출석 체크': [],
+        '조교 친절': [],
+      };
+      const tagOptions = Object.keys(tagAxisMap);
+
+      /* ================= DATA ================= */
+      function seedAxis(v, n) {
+        return new Array(n).fill(v);
+      }
+      const professors = [
+        {
+          id: 1,
+          name: '김을지 교수님',
+          dept: '보건과학대학 물리치료학과',
+          deptKey: '물리치료학과',
+          gradeKey: '1학년',
+          course: '운동처방학, 재활운동학',
+          reviewCount: 128,
+          tags: ['설명 친절', '과제 적당', '시험 난이도 중'],
+          tagSummary: [
+            ['설명 친절', 68],
+            ['과제 적당', 54],
+            ['시험 난이도 중', 49],
+            ['피드백 빠름', 41],
+            ['출석 체크', 38],
+            ['유쾌한 수업', 34],
+            ['자료 잘 제공', 28],
+            ['시험 범위 명확', 24],
+            ['조교 친절', 18],
+          ],
+          reviews: [
+            {
+              stars: 5,
+              term: '2024-1',
+              date: '2024.05.12',
+              body: '수업 내용을 이해하기 쉽게 설명해주셔서 좋았어요. 과제도 적당한 수준이었습니다!',
+              like: 12,
+              dislike: 0,
+            },
+            {
+              stars: 4,
+              term: '2024-1',
+              date: '2024.04.28',
+              body: '자료를 잘 제공해주셔서 시험 공부하기 편했어요. 시험 난이도는 중간 정도!',
+              like: 8,
+              dislike: 0,
+            },
+            {
+              stars: 5,
+              term: '2023-2',
+              date: '2024.03.15',
+              body: '피드백이 빨라서 질문하기 좋았습니다. 유쾌해서 수업 분위기도 좋아요!',
+              like: 15,
+              dislike: 0,
+            },
+          ],
+          diagramRatings: {
+            난이도: seedAxis(3.2, 8),
+            과제량: seedAxis(2.8, 8),
+            '시험 범위 명확성': seedAxis(4.3, 8),
+            '피드백 속도': seedAxis(4.5, 8),
+            '수업 태도': seedAxis(4.6, 8),
+          },
+        },
+        {
+          id: 2,
+          name: '박튼튼 교수님',
+          dept: '보건과학대학 임상병리학과',
+          deptKey: '임상병리학과',
+          gradeKey: '2학년',
+          course: '임상화학, 진단검사의학',
+          reviewCount: 87,
+          tags: ['과제 많음', '시험 난이도 상', '피드백 빠름'],
+          tagSummary: [
+            ['과제 많음', 52],
+            ['시험 난이도 상', 47],
+            ['피드백 빠름', 30],
+            ['출석 체크', 22],
+            ['설명 친절', 20],
+            ['자료 잘 제공', 15],
+          ],
+          reviews: [
+            {
+              stars: 4,
+              term: '2024-1',
+              date: '2024.05.02',
+              body: '과제가 많지만 그만큼 배우는 게 많아요. 시험은 꽤 어려운 편입니다.',
+              like: 6,
+              dislike: 1,
+            },
+            {
+              stars: 3,
+              term: '2023-2',
+              date: '2024.01.20',
+              body: '수업은 알찬데 진도가 빨라서 따라가기 벅찼어요.',
+              like: 4,
+              dislike: 0,
+            },
+          ],
+          diagramRatings: {
+            난이도: seedAxis(4.4, 8),
+            과제량: seedAxis(4.6, 8),
+            '시험 범위 명확성': seedAxis(3.0, 8),
+            '피드백 속도': seedAxis(4.1, 8),
+            '수업 태도': seedAxis(3.5, 8),
+          },
+        },
+        {
+          id: 3,
+          name: '이해쑥 교수님',
+          dept: '의료대학 의예과',
+          deptKey: '의예과',
+          gradeKey: '1학년',
+          course: '해부학, 생리학',
+          reviewCount: 153,
+          tags: ['설명 친절', '유쾌한 수업', '출석 체크'],
+          tagSummary: [
+            ['설명 친절', 90],
+            ['유쾌한 수업', 70],
+            ['출석 체크', 40],
+            ['과제 적당', 35],
+            ['시험 난이도 중', 30],
+          ],
+          reviews: [
+            {
+              stars: 5,
+              term: '2024-1',
+              date: '2024.05.10',
+              body: '제가 들은 수업 중 최고였어요. 설명이 정말 명쾌합니다.',
+              like: 20,
+              dislike: 0,
+            },
+            {
+              stars: 5,
+              term: '2023-2',
+              date: '2023.12.20',
+              body: '유쾌하게 수업하셔서 지루할 틈이 없었습니다.',
+              like: 14,
+              dislike: 0,
+            },
+          ],
+          diagramRatings: {
+            난이도: seedAxis(3.0, 8),
+            과제량: seedAxis(3.1, 8),
+            '시험 범위 명확성': seedAxis(4.7, 8),
+            '피드백 속도': seedAxis(4.6, 8),
+            '수업 태도': seedAxis(4.9, 8),
+          },
+        },
+      ];
+      professors.forEach(recalcRating);
+
+      const storeItems = [
+        {
+          key: 'exercise-eulji',
+          title: '운동처방학 기출 족보',
+          profId: 1,
+          sub: '중간/기말 기출 + 모범답안 포함',
+          price: 10,
+          owned: false,
+          author: null,
+        },
+        {
+          key: 'stat-park',
+          title: '의료통계학 기출 족보',
+          profId: 2,
+          sub: '중간/기말 기출 + 요약 정리본',
+          price: 10,
+          owned: false,
+          author: null,
+        },
+        {
+          key: 'rehab-eulji',
+          title: '재활운동학 기출 족보',
+          profId: 1,
+          sub: '기출 + 요약 + 핵심 정리',
+          price: 10,
+          owned: true,
+          author: null,
+        },
+      ];
+
+      const jokboContent = {
+        'exercise-eulji': {
+          summary:
+            '운동처방학 핵심 개념 요약 + 중간/기말 기출문제 12선. FITT 원리, 운동부하검사, 심폐지구력 처방 위주로 출제됩니다.',
+          qa: [
+            {
+              q: 'FITT 원리의 4가지 구성요소를 설명하시오.',
+              a: '빈도(Frequency), 강도(Intensity), 시간(Time), 형태(Type)로 구성되며 운동처방 시 개인 맞춤 강도 설정에 사용됩니다.',
+            },
+            {
+              q: '최대산소섭취량(VO2max) 측정 방법 두 가지를 서술하시오.',
+              a: '직접법(가스분석기를 이용한 최대운동부하검사)과 간접법(Astrand-Ryhming 등 추정 공식 이용)이 있습니다.',
+            },
+            {
+              q: '운동 강도 설정 시 사용하는 자각인지도(RPE)의 활용 범위는?',
+              a: 'Borg Scale 6~20 범위를 사용하며, 중강도 운동은 보통 12~14 구간에 해당합니다.',
+            },
+          ],
+        },
+        'stat-park': {
+          summary:
+            '의료통계학 기출 요약본. 가설검정, t-test, 카이제곱 검정 위주로 정리되어 있습니다.',
+          qa: [
+            {
+              q: '1종 오류와 2종 오류의 차이를 설명하시오.',
+              a: '1종 오류는 귀무가설이 참인데 기각하는 오류, 2종 오류는 귀무가설이 거짓인데 채택하는 오류입니다.',
+            },
+            {
+              q: '카이제곱 검정을 사용하는 대표적 상황은?',
+              a: '범주형 변수 간의 독립성 검정이나 적합도 검정에 주로 사용됩니다.',
+            },
+          ],
+        },
+        'rehab-eulji': {
+          summary:
+            '재활운동학 중간/기말 기출 + 핵심 정리 노트. 재활운동 프로토콜과 단계별 목표 설정이 자주 출제됩니다.',
+          qa: [
+            {
+              q: '재활운동의 3단계(급성기-회복기-강화기)별 목표를 서술하시오.',
+              a: '급성기는 통증 및 염증 관리, 회복기는 관절가동범위 및 기능 회복, 강화기는 근력·지구력 강화 및 복귀 준비가 목표입니다.',
+            },
+            {
+              q: '등척성 운동과 등장성 운동의 차이는?',
+              a: '등척성 운동은 관절 각도 변화 없이 근수축이 일어나는 운동이며, 등장성 운동은 관절 각도가 변화하며 근수축이 일어나는 운동입니다.',
+            },
+          ],
+        },
+      };
+
+      let pointHistory = [
+        { label: '회원가입', point: 20, date: '2024.02.10', type: 'plus' },
+        {
+          label: '족보 구매 - 재활운동학',
+          point: -10,
+          date: '2024.04.02',
+          type: 'minus',
+        },
+        { label: '태그 등록', point: 2, date: '2024.05.11', type: 'plus' },
+        { label: '리뷰 작성', point: 3, date: '2024.05.12', type: 'plus' },
+      ].reverse();
+      state.points = pointHistory.reduce((a, h) => a + h.point, 0);
+
+      let owned = [
+        {
+          title: '재활운동학 기출 족보',
+          prof: '김을지 교수님',
+          point: -10,
+          date: '2024.04.02',
+          key: 'rehab-eulji',
+        },
+      ];
+      owned.forEach((o) => {
+        const it = storeItems.find((s) => s.key === o.key);
+        if (it) it.owned = true;
+      });
+
+      /* ================= HELPERS ================= */
+      function recalcRating(p) {
+        if (p.reviews.length === 0) {
+          p.rating = 0;
+          return;
+        }
+        p.rating =
+          p.reviews.reduce((a, r) => a + r.stars, 0) / p.reviews.length;
+      }
+      function avg(arr) {
+        return arr.reduce((a, b) => a + b, 0) / arr.length;
+      }
+      function computeDiagram(p) {
+        const out = {};
+        AXES.forEach((ax) => {
+          out[ax] =
+            Math.round(Math.min(5, avg(p.diagramRatings[ax])) * 10) / 10;
+        });
+        return out;
+      }
+      function today() {
+        return new Date().toISOString().slice(0, 10).replace(/-/g, '.');
+      }
+      function togglePw(id) {
+        const el = document.getElementById(id);
+        el.type = el.type === 'password' ? 'text' : 'password';
+      }
+
+      /* ================= NAV ================= */
+      function go(view) {
+        document
+          .querySelectorAll('.view')
+          .forEach((v) => v.classList.remove('active'));
+        document.getElementById('view-' + view).classList.add('active');
+        document
+          .querySelectorAll('.nav-link')
+          .forEach((l) => l.classList.toggle('active', l.dataset.nav === view));
+        window.scrollTo(0, 0);
+        if (view === 'mypage') renderMypage();
+        if (view === 'store') renderStore();
+        if (view === 'diagram') {
+          renderDiagramSelect();
+          renderDiagramPage();
+        }
+        if (view === 'home') {
+          renderDashStrip();
+          renderProfList();
+        }
+      }
+      function requireLogin() {
+        if (!state.loggedIn) {
+          go('login');
+          return false;
+        }
+        return true;
+      }
+
+      function doLogin() {
+        const email = document.getElementById('loginEmail').value.trim();
+        if (!email) {
+          document.getElementById('loginEmail').focus();
+          return;
+        }
+        state.loggedIn = true;
+        updateNav();
+        go('home');
+        showToast('로그인 되었습니다.');
+      }
+      function signupComplete() {
+        if (!document.getElementById('suAgree').checked) {
+          const e = document.getElementById('suErr');
+          e.textContent = '이용약관에 동의해주세요.';
+          e.style.display = 'block';
+          return;
+        }
+        const nick = document.getElementById('suNick').value.trim();
+        if (nick) state.nickname = nick;
+        state.dept = document.getElementById('suDept').value;
+        state.grade = document.getElementById('suGrade').value;
+        state.loggedIn = true;
+        state.points += 20;
+        pointHistory.unshift({
+          label: '회원가입',
+          point: 20,
+          date: today(),
+          type: 'plus',
+        });
+        updateNav();
+        go('home');
+        showToast('회원가입 완료! 기본 포인트 20P가 지급되었습니다.');
+      }
+      function doLogout() {
+        state.loggedIn = false;
+        updateNav();
+        go('home');
+      }
+      function updateNav() {
+        const right = document.getElementById('navRight');
+        if (state.loggedIn) {
+          right.innerHTML = `<div class="point-badge">🪙 ${state.points}P</div>
+      <button class="nav-mypage-btn" onclick="go('mypage')"><span class="nav-avatar">😀</span>마이페이지</button>`;
+        } else {
+          right.innerHTML = `<button class="login-btn" onclick="go('login')">로그인</button>`;
+        }
+      }
+
+      /* ================= HOME ================= */
+      function renderDashStrip() {
+        const el = document.getElementById('dashStrip');
+        if (!state.loggedIn) {
+          el.innerHTML = `
+      <div class="dash-card"><div class="lbl">둘러보는 중</div><div class="val">로그인하면</div><a class="link" onclick="go('login')">내 활동을 한눈에 볼 수 있어요 →</a></div>
+      <div class="dash-card"><div class="lbl">전체 교수님</div><div class="val">${professors.length}명</div></div>
+      <div class="dash-card"><div class="lbl">족보 스토어</div><div class="val">${storeItems.length}건</div><a class="link" onclick="go('store')">스토어 가기 →</a></div>
+      <div class="dash-card"><div class="lbl">회원가입 혜택</div><div class="val accent">+20P</div></div>
+    `;
+          return;
+        }
+        el.innerHTML = `
+    <div class="dash-card"><div class="lbl">내 포인트</div><div class="val accent">${state.points}P</div><a class="link" onclick="go('mypage')">마이페이지 →</a></div>
+    <div class="dash-card"><div class="lbl">찜한 교수님</div><div class="val">${state.bookmarks.size}명</div><a class="link" onclick="switchSideAndGo('bookmark')">찜 목록 →</a></div>
+    <div class="dash-card"><div class="lbl">보유 족보</div><div class="val">${owned.length}건</div><a class="link" onclick="switchSideAndGo('owned')">족보함 →</a></div>
+    <div class="dash-card"><div class="lbl">수강 인증</div><div class="val">${state.verifiedProfIds.size}건</div><a class="link" onclick="switchSideAndGo('grade')">인증 내역 →</a></div>
+  `;
+      }
+      function switchSideAndGo(name) {
+        go('mypage');
+        switchSide(name);
+      }
+
+      function renderProfList() {
+        const q = (document.getElementById('searchInput')?.value || '')
+          .trim()
+          .toLowerCase();
+        const dept = document.getElementById('deptFilter').value;
+        const grade = document.getElementById('gradeFilter').value;
+        document
+          .getElementById('deptFilter')
+          .classList.toggle('active-filter', dept !== '전체');
+        document
+          .getElementById('gradeFilter')
+          .classList.toggle('active-filter', grade !== '전체');
+        const list = document.getElementById('profList');
+        const filtered = professors.filter(
+          (p) =>
+            (p.name.toLowerCase().includes(q) ||
+              p.course.toLowerCase().includes(q)) &&
+            (dept === '전체' || p.deptKey === dept) &&
+            (grade === '전체' || p.gradeKey === grade),
+        );
+        document.getElementById('profCountLabel').textContent =
+          `총 ${filtered.length}명`;
+        list.innerHTML =
+          filtered
+            .map(
+              (p) => `
+    <div class="prof-card">
+      <button class="bookmark-btn ${state.bookmarks.has(p.id) ? 'active' : ''}" onclick="toggleBookmark(${p.id},event)">🔖</button>
+      <div class="card-top">
+        <div class="avatar">${p.name[0]}</div>
+        <div><div class="prof-name">${p.name}</div><div class="prof-dept">${p.dept}</div></div>
+      </div>
+      <div class="tag-row">${p.tags.map((t) => `<span class="tag-pill">${t}</span>`).join('')}</div>
+      <div class="card-bottom">
+        <div class="rating">★ ${p.rating.toFixed(1)}<span class="count">(${p.reviewCount})</span></div>
+        <button class="detail-btn" onclick="openDetail(${p.id})">자세히 보기</button>
+      </div>
+    </div>
+  `,
+            )
+            .join('') ||
+          `<div class="empty-note" style="grid-column:1/-1;">검색 결과가 없습니다.</div>`;
+      }
+      function toggleBookmark(id, e) {
+        e.stopPropagation();
+        if (state.bookmarks.has(id)) state.bookmarks.delete(id);
+        else state.bookmarks.add(id);
+        renderProfList();
+      }
+
+      /* ================= DETAIL ================= */
+      let detailChart = null;
+      function openDetail(id) {
+        state.currentProf = professors.find((p) => p.id === id);
+        const p = state.currentProf;
+        document.getElementById('detailName').textContent = p.name;
+        document.getElementById('detailSub').textContent =
+          `${p.dept}  |  담당 과목: ${p.course}`;
+        document.getElementById('detailRating').textContent =
+          p.rating.toFixed(1);
+        document.getElementById('detailReviewCount').textContent =
+          `(${p.reviewCount}개 리뷰)`;
+        document.getElementById('detailTopTags').innerHTML = p.tags
+          .map((t) => `<span class="tag-pill">${t}</span>`)
+          .join('');
+        renderSummaryGrid();
+        renderReviewList();
+        document.getElementById('diagramLegendName').textContent = p.name;
+        document.getElementById('tagLoginNote').textContent = state.loggedIn
+          ? ''
+          : ' 태그 입력은 로그인이 필요합니다.';
+        document
+          .getElementById('detailBookmarkBtn')
+          .classList.toggle('active', state.bookmarks.has(p.id));
+        updateVerifyUI();
+        switchTab('summary');
+        go('detail');
+        setTimeout(() => renderRadar('detailRadarChart', p), 50);
+      }
+      function updateVerifyUI() {
+        const p = state.currentProf;
+        const verified = state.verifiedProfIds.has(p.id);
+        const vBtn = document.getElementById('detailVerifyBtn');
+        vBtn.textContent = verified
+          ? '✅ 수강확인서 인증 완료'
+          : '🎓 수강확인서 인증하기';
+        vBtn.classList.toggle('done', verified);
+        document.getElementById('verifyNote').style.display =
+          state.loggedIn && !verified ? 'flex' : 'none';
+        const btn = document.getElementById('writeReviewBtn');
+        if (!state.loggedIn) {
+          btn.textContent = '✍️ 리뷰 작성';
+          btn.classList.remove('locked');
+        } else if (!verified) {
+          btn.textContent = '🔒 인증 후 작성 가능';
+          btn.classList.add('locked');
+        } else {
+          btn.textContent = '✍️ 리뷰 작성';
+          btn.classList.remove('locked');
+        }
+      }
+      function renderSummaryGrid() {
+        const p = state.currentProf;
+        document.getElementById('summaryGrid').innerHTML = p.tagSummary
+          .map(
+            ([t, c]) =>
+              `<div class="summary-tag"><span>${t}</span><b>${c}</b></div>`,
+          )
+          .join('');
+      }
+      function renderReviewList() {
+        const p = state.currentProf;
+        document.getElementById('reviewList').innerHTML = p.reviews.length
+          ? p.reviews
+              .map(
+                (r, i) => `
+    <div class="review-item">
+      <div class="review-head">
+        <div><div class="review-user">익명</div><div class="review-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5 - r.stars)}</div></div>
+        <div class="review-date">${r.date}</div>
+      </div>
+      <div class="review-meta">수강 학기: ${r.term}</div>
+      <div class="review-body">${r.body}</div>
+      <div class="review-actions"><button onclick="likeReview(${i})">👍 ${r.like}</button><button onclick="dislikeReview(${i})">👎 ${r.dislike}</button></div>
+    </div>
+  `,
+              )
+              .join('')
+          : `<div class="empty-note">아직 등록된 리뷰가 없어요.</div>`;
+      }
+      function likeReview(i) {
+        state.currentProf.reviews[i].like++;
+        renderReviewList();
+      }
+      function dislikeReview(i) {
+        state.currentProf.reviews[i].dislike++;
+        renderReviewList();
+      }
+
+      function toggleBookmarkDetail() {
+        if (!state.currentProf) return;
+        const id = state.currentProf.id;
+        if (state.bookmarks.has(id)) state.bookmarks.delete(id);
+        else state.bookmarks.add(id);
+        document
+          .getElementById('detailBookmarkBtn')
+          .classList.toggle('active', state.bookmarks.has(id));
+      }
+      function switchTab(name) {
+        document
+          .querySelectorAll('.tab-btn')
+          .forEach((b) => b.classList.toggle('active', b.dataset.tab === name));
+        document
+          .querySelectorAll('.tab-panel')
+          .forEach((p) => p.classList.remove('active'));
+        document.getElementById('panel-' + name).classList.add('active');
+        if (name === 'diagram' && state.currentProf)
+          setTimeout(
+            () => renderRadar('detailRadarChart', state.currentProf),
+            50,
+          );
+      }
+      function renderRadar(canvasId, prof) {
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) return;
+        const data = computeDiagram(prof);
+        const labels = AXES;
+        const values = AXES.map((a) => data[a]);
+        if (canvasId === 'detailRadarChart' && detailChart) {
+          detailChart.destroy();
+        }
+        if (canvasId === 'standaloneRadarChart' && window.standaloneChart) {
+          window.standaloneChart.destroy();
+        }
+        const chart = new Chart(ctx, {
+          type: 'radar',
+          data: {
+            labels,
+            datasets: [
+              {
+                label: prof.name,
+                data: values,
+                backgroundColor: 'rgba(59,82,226,0.18)',
+                borderColor: '#3B52E2',
+                pointBackgroundColor: '#3B52E2',
+                borderWidth: 2,
+                pointRadius: 4,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+              r: {
+                min: 0,
+                max: 5,
+                ticks: {
+                  stepSize: 1,
+                  backdropColor: 'transparent',
+                  color: '#9CA3AF',
+                  font: { size: 10 },
+                },
+                grid: { color: '#E7E9F0' },
+                angleLines: { color: '#E7E9F0' },
+                pointLabels: {
+                  font: { size: 11.5, weight: '700' },
+                  color: '#141726',
+                },
+              },
+            },
+          },
+        });
+        if (canvasId === 'detailRadarChart') detailChart = chart;
+        if (canvasId === 'standaloneRadarChart') window.standaloneChart = chart;
+      }
+      function refreshDiagramIfVisible(prof) {
+        if (
+          document.getElementById('panel-diagram')?.classList.contains('active')
+        ) {
+          renderRadar('detailRadarChart', prof);
+        }
+        if (
+          document.getElementById('view-diagram').classList.contains('active')
+        ) {
+          renderDiagramPage();
+        }
+      }
+
+      /* ---- tag modal ---- */
+      function openTagModal() {
+        if (!requireLogin()) return;
+        state.selectedTag = null;
+        document.getElementById('tagOptionGrid').innerHTML = tagOptions
+          .map(
+            (t) =>
+              `<div class="tag-option" onclick="selectTag(this,'${t}')">${t}</div>`,
+          )
+          .join('');
+        document.getElementById('tagModal').classList.add('active');
+      }
+      function selectTag(el, t) {
+        document
+          .querySelectorAll('#tagOptionGrid .tag-option')
+          .forEach((o) => o.classList.remove('selected'));
+        el.classList.add('selected');
+        state.selectedTag = t;
+      }
+      function submitTag() {
+        if (!state.selectedTag) return;
+        const p = state.currentProf;
+        const existing = p.tagSummary.find(([t]) => t === state.selectedTag);
+        if (existing) existing[1]++;
+        else p.tagSummary.push([state.selectedTag, 1]);
+        p.tagSummary.sort((a, b) => b[1] - a[1]);
+        renderSummaryGrid();
+        (tagAxisMap[state.selectedTag] || []).forEach(([axis, val]) => {
+          p.diagramRatings[axis].push(val);
+        });
+        refreshDiagramIfVisible(p);
+        state.points += 2;
+        pointHistory.unshift({
+          label: `태그 등록 - ${state.selectedTag}`,
+          point: 2,
+          date: today(),
+          type: 'plus',
+        });
+        updateNav();
+        closeModal('tagModal');
+        showToast('태그가 등록되었습니다. (+2P) 다이어그램에도 반영됐어요.');
+      }
+
+      /* ---- review flow (verification gated) ---- */
+      function handleReviewClick() {
+        if (!requireLogin()) return;
+        if (!state.verifiedProfIds.has(state.currentProf.id)) {
+          showToast('수강확인서 인증 후 리뷰를 작성할 수 있어요.');
+          openVerifyModal();
+          return;
+        }
+        openReviewModal();
+      }
+      function openReviewModal() {
+        state.reviewStars = 0;
+        document
+          .querySelectorAll('#starSelect span')
+          .forEach((s) => s.classList.remove('on'));
+        document.getElementById('reviewText').value = '';
+        document.getElementById('reviewModal').classList.add('active');
+      }
+      document.getElementById('starSelect')?.addEventListener('click', (e) => {
+        if (e.target.tagName !== 'SPAN') return;
+        const v = Number(e.target.dataset.v);
+        state.reviewStars = v;
+        document
+          .querySelectorAll('#starSelect span')
+          .forEach((s) => s.classList.toggle('on', Number(s.dataset.v) <= v));
+      });
+      function submitReview() {
+        const text = document.getElementById('reviewText').value.trim();
+        if (state.reviewStars === 0 || !text) {
+          alert('별점과 리뷰 내용을 입력해주세요.');
+          return;
+        }
+        const p = state.currentProf;
+        p.reviews.unshift({
+          stars: state.reviewStars,
+          term: '2024-1',
+          date: today(),
+          body: text,
+          like: 0,
+          dislike: 0,
+        });
+        p.reviewCount++;
+        recalcRating(p);
+        document.getElementById('detailRating').textContent =
+          p.rating.toFixed(1);
+        document.getElementById('detailReviewCount').textContent =
+          `(${p.reviewCount}개 리뷰)`;
+        renderReviewList();
+        p.diagramRatings['수업 태도'].push(state.reviewStars);
+        refreshDiagramIfVisible(p);
+        state.points += 3;
+        pointHistory.unshift({
+          label: '리뷰 작성 (익명)',
+          point: 3,
+          date: today(),
+          type: 'plus',
+        });
+        updateNav();
+        closeModal('reviewModal');
+        showToast(
+          '리뷰가 익명으로 등록되었습니다. (+3P) 다이어그램에도 반영됐어요.',
+        );
+      }
+
+      /* ---- verification modal ---- */
+      function openVerifyModal() {
+        if (!requireLogin()) return;
+        state.verifyTargetProfId = state.currentProf.id;
+        document.getElementById('verifyDesc').textContent =
+          `'${state.currentProf.name}' 수업의 수강확인서를 인증하시겠습니까?`;
+        document.getElementById('verifyModal').classList.add('active');
+      }
+      function confirmVerify() {
+        const term = document.getElementById('verifyTerm').value;
+        state.verifiedProfIds.add(state.verifyTargetProfId);
+        if (!state._verifyLog) state._verifyLog = [];
+        const prof = professors.find((p) => p.id === state.verifyTargetProfId);
+        state._verifyLog.unshift({ prof: prof.name, term, date: today() });
+        closeModal('verifyModal');
+        updateVerifyUI();
+        showToast(
+          '수강확인서 인증이 완료됐어요. 이제 리뷰를 작성할 수 있어요.',
+        );
+      }
+
+      /* ================= MYPAGE ================= */
+      function renderMypage() {
+        document.getElementById('mypageName').textContent = state.nickname;
+        document.getElementById('mypageDept').textContent =
+          `${state.dept} ${state.grade}`;
+        document.getElementById('gradeDept').textContent = state.dept;
+        document.getElementById('gradeYear').textContent = state.grade;
+        document.getElementById('pointValue').textContent = state.points;
+        document.getElementById('pointHistoryTable').innerHTML = pointHistory
+          .map(
+            (h) => `
+    <tr><td>${h.label}<div class="h-date">${h.date}</div></td><td class="h-point ${h.type}">${h.point > 0 ? '+' : ''}${h.point}P</td></tr>
+  `,
+          )
+          .join('');
+        document.getElementById('ownedList').innerHTML = owned.length
+          ? owned
+              .map(
+                (o) => `
+    <div class="owned-item">
+      <div class="owned-top"><div class="owned-title">${o.title}</div><div class="h-point minus">${o.point}P</div></div>
+      <div class="owned-prof">${o.prof}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div class="owned-date">구매일: ${o.date}</div>
+        <button class="ghost-btn" onclick="openJokbo('${o.key}')">족보 보러가기</button>
+      </div>
+    </div>
+  `,
+              )
+              .join('')
+          : `<div class="empty-note">아직 구매한 족보가 없어요.</div>`;
+        const written = storeItems.filter((it) => it.author === state.nickname);
+        document.getElementById('writtenList').innerHTML = written.length
+          ? written
+              .map(
+                (it) => `
+    <div class="owned-item">
+      <div class="owned-top"><div class="owned-title">${it.title}</div><div style="font-size:11.5px;color:var(--text-faint);">10P</div></div>
+      <div class="owned-prof">${professors.find((p) => p.id === it.profId).name}</div>
+      <button class="ghost-btn" onclick="openJokbo('${it.key}')">족보 보기</button>
+    </div>
+  `,
+              )
+              .join('')
+          : `<div class="empty-note">아직 작성한 족보가 없어요.</div>`;
+        const bookmarked = professors.filter((p) => state.bookmarks.has(p.id));
+        document.getElementById('bookmarkListMypage').innerHTML =
+          bookmarked.length
+            ? bookmarked
+                .map(
+                  (p) => `
+    <div class="owned-item">
+      <div class="owned-top"><div class="owned-title">${p.name}</div><div class="rating" style="font-size:12px;">★ ${p.rating.toFixed(1)}</div></div>
+      <div class="owned-prof">${p.dept}</div>
+      <button class="ghost-btn" onclick="openDetail(${p.id})">교수 상세보기</button>
+    </div>
+  `,
+                )
+                .join('')
+            : `<div class="empty-note">찜한 교수님이 없어요.</div>`;
+        const vlog = state._verifyLog || [];
+        document.getElementById('verifyList').innerHTML = vlog.length
+          ? vlog
+              .map(
+                (v) => `
+    <div class="verify-row"><div>${v.prof} <span style="color:var(--text-faint);font-size:11.5px;">(${v.term})</span></div><div class="verify-badge">✔ 인증 완료</div></div>
+  `,
+              )
+              .join('')
+          : `<div class="empty-note">아직 인증한 수강확인서가 없어요.</div>`;
+      }
+      function switchSide(name) {
+        document
+          .querySelectorAll('.side-item')
+          .forEach((s) =>
+            s.classList.toggle('active', s.dataset.side === name),
+          );
+        document
+          .querySelectorAll('.mypage-side-panel')
+          .forEach((p) =>
+            p.classList.toggle('active', p.id === 'side-' + name),
+          );
+      }
+      function saveProfile() {
+        state.nickname =
+          document.getElementById('editNick').value.trim() || state.nickname;
+        state.dept = document.getElementById('editDept').value;
+        state.grade = document.getElementById('editGrade').value;
+        renderMypage();
+        switchSide('point');
+        showToast('내 정보가 저장되었습니다.');
+      }
+
+      /* ================= STORE ================= */
+      function renderStore() {
+        const q = (document.getElementById('storeSearchInput')?.value || '')
+          .trim()
+          .toLowerCase();
+        const dept = document.getElementById('storeDeptFilter').value;
+        const grade = document.getElementById('storeGradeFilter').value;
+        const list = document.getElementById('storeList');
+        const filtered = storeItems.filter((it) => {
+          const prof = professors.find((p) => p.id === it.profId);
+          return (
+            (it.title.toLowerCase().includes(q) ||
+              prof.name.toLowerCase().includes(q)) &&
+            (dept === '전체' || prof.deptKey === dept) &&
+            (grade === '전체' || prof.gradeKey === grade)
+          );
+        });
+        list.innerHTML =
+          filtered
+            .map((it) => {
+              const prof = professors.find((p) => p.id === it.profId);
+              return `
+    <div class="store-item">
+      <div class="store-item-top"><div class="store-item-title">${it.title}</div><div class="store-price">${it.price}P</div></div>
+      <div class="store-item-sub">${prof.name} | ${it.sub}</div>
+      <div class="store-item-author">${it.author ? '작성자: ' + it.author : '운영진 제공'}</div>
+      ${
+        it.owned
+          ? `<button class="buy-btn" onclick="openJokbo('${it.key}')">📘 족보 보러가기</button>`
+          : `<button class="buy-btn" onclick="openPurchase('${it.key}')">구매하기</button>`
+      }
+    </div>`;
+            })
+            .join('') +
+          `
+    <div class="sponsor-card">
+      <div><div class="sponsor-tag">스폰서</div><div class="sponsor-title">을지대학 학습 자료 필요한 땐?</div></div>
+      <button class="ghost-btn">자세히 보기</button>
+    </div>
+  `;
+      }
+      function openPurchase(key) {
+        if (!requireLogin()) return;
+        const item = storeItems.find((i) => i.key === key);
+        state.pendingPurchase = item;
+        document.getElementById('modalDesc').textContent =
+          `'${item.title}'를 ${item.price}포인트로 구매하시겠습니까?`;
+        document.getElementById('modalPoint').textContent = state.points + ' P';
+        document.getElementById('purchaseModal').classList.add('active');
+      }
+      function confirmPurchase() {
+        const item = state.pendingPurchase;
+        if (!item) return;
+        if (state.points < item.price) {
+          alert('포인트가 부족합니다.');
+          closeModal('purchaseModal');
+          return;
+        }
+        state.points -= item.price;
+        item.owned = true;
+        const prof = professors.find((p) => p.id === item.profId);
+        owned.unshift({
+          title: item.title,
+          prof: prof.name,
+          point: -item.price,
+          date: today(),
+          key: item.key,
+        });
+        pointHistory.unshift({
+          label: `족보 구매 - ${item.title}`,
+          point: -item.price,
+          date: today(),
+          type: 'minus',
+        });
+        updateNav();
+        closeModal('purchaseModal');
+        renderStore();
+        showToast('구매 완료! 마이페이지에서 확인할 수 있어요.');
+      }
+      function closeModal(id) {
+        document.getElementById(id).classList.remove('active');
+        state.pendingPurchase = null;
+      }
+
+      /* ================= JOKBO WRITE ================= */
+      function openWriteJokbo() {
+        if (!requireLogin()) return;
+        document.getElementById('wjProf').innerHTML = professors
+          .map(
+            (p) => `<option value="${p.id}">${p.name} (${p.course})</option>`,
+          )
+          .join('');
+        document.getElementById('wjTitle').value = '';
+        document.getElementById('wjSummary').value = '';
+        document.getElementById('wjContent').value = '';
+        go('jokbo-write');
+      }
+      function submitJokboWrite() {
+        const profId = Number(document.getElementById('wjProf').value);
+        const title = document.getElementById('wjTitle').value.trim();
+        const summary = document.getElementById('wjSummary').value.trim();
+        const content = document.getElementById('wjContent').value.trim();
+        if (!title || !summary || !content) {
+          alert('모든 항목을 입력해주세요.');
+          return;
+        }
+        const key = 'user-' + Date.now();
+        const prof = professors.find((p) => p.id === profId);
+        storeItems.unshift({
+          key,
+          title,
+          profId,
+          sub: summary.slice(0, 40) + (summary.length > 40 ? '...' : ''),
+          price: 10,
+          owned: true,
+          author: state.nickname,
+        });
+        jokboContent[key] = { summary, raw: content, qa: [] };
+        owned.unshift({ title, prof: prof.name, point: 0, date: today(), key });
+        showToast('족보가 등록되었습니다. 닉네임과 함께 노출돼요.');
+        go('store');
+      }
+
+      /* ================= JOKBO DETAIL VIEW ================= */
+      function openJokbo(key) {
+        state.currentJokboKey = key;
+        const item = storeItems.find((i) => i.key === key);
+        const prof = professors.find((p) => p.id === item.profId);
+        const content = jokboContent[key];
+        const body = document.getElementById('jokboDetailBody');
+        if (!item.owned) {
+          body.innerHTML = `
+      <div class="jokbo-locked">
+        <div class="lock-ico">🔒</div>
+        <div style="font-weight:700;margin-bottom:6px;">아직 구매하지 않은 족보예요</div>
+        <div style="font-size:12.5px;margin-bottom:18px;">${item.price}포인트로 구매하면 바로 열람할 수 있어요.</div>
+        <button class="add-tag-btn" onclick="openPurchase('${key}')">${item.price}P로 구매하기</button>
+      </div>`;
+        } else {
+          const authorLine = item.author
+            ? `작성자: <b style="color:var(--primary);">${item.author}</b>`
+            : '운영진 제공';
+          body.innerHTML = `
+      <h1>${item.title}</h1>
+      <div class="meta">${prof.name} | ${prof.course} · ${authorLine}</div>
+      <div class="jokbo-section">
+        <h4>📋 요약</h4>
+        <div class="jokbo-qa"><div class="a">${content.summary}</div></div>
+      </div>
+      ${
+        content.qa && content.qa.length
+          ? `
+      <div class="jokbo-section">
+        <h4>❓ 기출 문제 &amp; 모범답안</h4>
+        ${content.qa.map((qa) => `<div class="jokbo-qa"><div class="q">Q. ${qa.q}</div><div class="a">A. ${qa.a}</div></div>`).join('')}
+      </div>`
+          : ''
+      }
+      ${
+        content.raw
+          ? `
+      <div class="jokbo-section">
+        <h4>📝 본문</h4>
+        <div class="jokbo-qa"><div class="a">${content.raw}</div></div>
+      </div>`
+          : ''
+      }
+      `;
+        }
+        go('jokbo');
+      }
+      function goJokboFromDetail() {
+        const p = state.currentProf;
+        const item = storeItems.find((i) => i.profId === p.id);
+        if (!item) {
+          showToast('등록된 족보가 없는 교수님입니다.');
+          return;
+        }
+        openJokbo(item.key);
+      }
+
+      /* ================= STANDALONE DIAGRAM ================= */
+      function renderDiagramSelect() {
+        const sel = document.getElementById('diagramProfSelect');
+        sel.innerHTML = professors
+          .map(
+            (p) =>
+              `<option value="${p.id}" ${state.currentProf && state.currentProf.id === p.id ? 'selected' : ''}>${p.name}</option>`,
+          )
+          .join('');
+      }
+      function renderDiagramPage() {
+        const id =
+          Number(document.getElementById('diagramProfSelect').value) ||
+          professors[0].id;
+        const p = professors.find((x) => x.id === id);
+        document.getElementById('standaloneLegendName').textContent = p.name;
+        setTimeout(() => renderRadar('standaloneRadarChart', p), 50);
+      }
+
+      /* ================= TOAST ================= */
+      function showToast(text) {
+        document.getElementById('toastText').textContent = text;
+        const t = document.getElementById('toast');
+        t.classList.add('active');
+        clearTimeout(window._toastTimer);
+        window._toastTimer = setTimeout(
+          () => t.classList.remove('active'),
+          2600,
+        );
+      }
+
+      /* ================= INIT ================= */
+      renderDashStrip();
+      renderProfList();
+      updateNav();
+    </script>
+  </body>
+</html>
